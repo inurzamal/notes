@@ -1,11 +1,24 @@
+import org.apache.http.ssl.SSLContexts;
+import org.apache.http.ssl.TrustSelfSignedStrategy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
+import org.springframework.ws.transport.http.HttpComponentsMessageSender;
+
+import javax.net.ssl.SSLContext;
+import java.io.FileInputStream;
+import java.security.KeyStore;
 
 @Configuration
 public class SoapConfig {
+
+    @Value("${soap.client.keystore.path}") // Replace with the actual keystore path
+    private String keystorePath;
+
+    @Value("${soap.client.keystore.password}") // Replace with the keystore password
+    private String keystorePassword;
 
     @Bean
     public Jaxb2Marshaller marshaller() {
@@ -18,11 +31,11 @@ public class SoapConfig {
     public WebServiceTemplate webServiceTemplate() {
         WebServiceTemplate webServiceTemplate = new WebServiceTemplate(marshaller());
 
-        // Create an HttpsUrlConnectionMessageSender with SSL configuration
-        HttpsUrlConnectionMessageSender messageSender = new HttpsUrlConnectionMessageSender();
+        // Create an HttpComponentsMessageSender with SSL configuration
+        HttpComponentsMessageSender messageSender = new HttpComponentsMessageSender();
 
         // Set SSL properties
-        messageSender.setSslContext(createSSLContext()); // Define createSSLContext() method
+        messageSender.setHttpClient(createHttpClientWithSSL());
 
         // Assign the message sender to the WebServiceTemplate
         webServiceTemplate.setMessageSender(messageSender);
@@ -30,25 +43,24 @@ public class SoapConfig {
         return webServiceTemplate;
     }
 
-    // Define a method to create and configure the SSLContext
-    private SSLContext createSSLContext() {
+    // Define a method to create and configure the HttpClient with SSL
+    private HttpClient createHttpClientWithSSL() {
         try {
-            // Load your keystore and truststore
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(getClass().getResourceAsStream("/path/to/your/keystore.p12"), "keystorePassword".toCharArray());
+            try (FileInputStream inputStream = new FileInputStream(keystorePath)) {
+                keyStore.load(inputStream, keystorePassword.toCharArray());
+            }
 
-            KeyStore trustStore = KeyStore.getInstance("JKS");
-            trustStore.load(getClass().getResourceAsStream("/path/to/your/truststore.jks"), "truststorePassword".toCharArray());
-
-            // Set up the SSL context with your keystore and truststore
             SSLContext sslContext = SSLContexts.custom()
-                    .loadKeyMaterial(keyStore, "keystorePassword".toCharArray())
-                    .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy())
+                    .loadKeyMaterial(keyStore, keystorePassword.toCharArray())
+                    .loadTrustMaterial(new TrustSelfSignedStrategy())
                     .build();
 
-            return sslContext;
+            return HttpClients.custom()
+                    .setSSLContext(sslContext)
+                    .build();
         } catch (Exception e) {
-            throw new RuntimeException("Error creating SSLContext", e);
+            throw new RuntimeException("Error creating HttpClient with SSL", e);
         }
     }
 }
