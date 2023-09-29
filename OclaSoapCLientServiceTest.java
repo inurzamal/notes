@@ -7,6 +7,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.client.core.WebServiceTemplate;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -41,8 +44,14 @@ public class OclaSoapClientServiceTest {
         // Set up your request object here
 
         JAXBElement<AddDocumentCommunicationResponseType> responseElement = mock(JAXBElement.class);
-        when(marshaller.marshalSendAndReceive(anyString(), any(JAXBElement.class)))
-            .thenReturn(responseElement);
+
+        WebServiceTemplate webServiceTemplate = mock(WebServiceTemplate.class);
+        when(webServiceTemplate.marshalSendAndReceive(
+            eq("http://localhost:8080/ws"),
+            any(JAXBElement.class))
+        ).thenReturn(responseElement);
+
+        oclaSoapClientService.setWebServiceTemplate(webServiceTemplate);
 
         AddDocumentCommunicationResponseType acknowledgement = new AddDocumentCommunicationResponseType();
         // Set up your acknowledgement object here
@@ -65,8 +74,13 @@ public class OclaSoapClientServiceTest {
         AddDocumentCommunicationType request = new AddDocumentCommunicationType();
         // Set up your request object here
 
-        when(marshaller.marshalSendAndReceive(anyString(), any(JAXBElement.class)))
-            .thenThrow(new RuntimeException("Test exception"));
+        WebServiceTemplate webServiceTemplate = mock(WebServiceTemplate.class);
+        when(webServiceTemplate.marshalSendAndReceive(
+            eq("http://localhost:8080/ws"),
+            any(JAXBElement.class))
+        ).thenThrow(new RuntimeException("Test exception"));
+
+        oclaSoapClientService.setWebServiceTemplate(webServiceTemplate);
 
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
