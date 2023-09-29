@@ -2,13 +2,11 @@ import com.example.yourpackage.AddDocumentCommunicationType;
 import com.example.yourpackage.AddDocumentCommunicationResponseType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import javax.xml.bind.JAXBElement;
@@ -19,10 +17,14 @@ import static org.mockito.Mockito.*;
 
 public class OclaSoapClientServiceTest {
 
+    @InjectMocks
     private OclaSoapClientService oclaSoapClientService;
 
     @Mock
     private Jaxb2Marshaller marshaller;
+
+    @Mock
+    private WebServiceTemplate webServiceTemplate;
 
     @Mock
     private OclaCommunicationUtility oclaCommunicationUtility;
@@ -30,11 +32,8 @@ public class OclaSoapClientServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        oclaSoapClientService = new OclaSoapClientService();
         ReflectionTestUtils.setField(oclaSoapClientService, "NAMESPACE", "http://example.com/your-namespace");
         ReflectionTestUtils.setField(oclaSoapClientService, "OCLA_URI", "http://localhost:8080/ws");
-        ReflectionTestUtils.setField(oclaSoapClientService, "marshaller", marshaller);
-        ReflectionTestUtils.setField(oclaSoapClientService, "oclaCommunicationUtility", oclaCommunicationUtility);
     }
 
     @Test
@@ -44,14 +43,10 @@ public class OclaSoapClientServiceTest {
         // Set up your request object here
 
         JAXBElement<AddDocumentCommunicationResponseType> responseElement = mock(JAXBElement.class);
-
-        WebServiceTemplate webServiceTemplate = mock(WebServiceTemplate.class);
         when(webServiceTemplate.marshalSendAndReceive(
             eq("http://localhost:8080/ws"),
             any(JAXBElement.class))
         ).thenReturn(responseElement);
-
-        oclaSoapClientService.setWebServiceTemplate(webServiceTemplate);
 
         AddDocumentCommunicationResponseType acknowledgement = new AddDocumentCommunicationResponseType();
         // Set up your acknowledgement object here
@@ -74,13 +69,10 @@ public class OclaSoapClientServiceTest {
         AddDocumentCommunicationType request = new AddDocumentCommunicationType();
         // Set up your request object here
 
-        WebServiceTemplate webServiceTemplate = mock(WebServiceTemplate.class);
         when(webServiceTemplate.marshalSendAndReceive(
             eq("http://localhost:8080/ws"),
             any(JAXBElement.class))
         ).thenThrow(new RuntimeException("Test exception"));
-
-        oclaSoapClientService.setWebServiceTemplate(webServiceTemplate);
 
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
