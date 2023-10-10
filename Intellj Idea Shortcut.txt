@@ -1,0 +1,61 @@
+Intellij shortcut key
+______________________
+
+1) Load maven changes --> Ctrl+Shift+ O
+2) Assign statement to a new local variable --> Ctrl+Alt+V / Alt+Enter
+3) Code Completion --> ctrl+space twice/ Ctrl+shift+space / Ctrl+shift+enter/Ctrl .
+4) Import package --> Alt+Shift+Enter
+
+5) Go to next error --> F2 (Fn+F2) then Alt+Enter to fix it
+6) To navigate backward --> Ctrl + Alt + left arrow
+7) To navigate forward --> Ctrl + Alt + right arrow
+8) To navigate last edited location --> Ctrl + shift + backspace
+9) Show usage --> place cursor then Ctrl+Alt+F7 (or Alt+ F7)
+10) Search --> Ctrl+ Shift + F (tab 'shift' twice to search everywhere)
+11) System.out.println() --> sout then ctrl+J
+
+9) To create a Test case; Ctrl+Shift+T
+10) Multiline Edit --> Alt+Ctrl+Shift+J 
+
+11) Toggle break point --> Ctrl+F8
+12) Run with debugger --> Shift + F9
+13) step over --> F8 (Fn+F8)
+14) Go inside the method --> F7 (Fn+F7)
+-----------------------------------------------
+15) Open Project window --> Alt+1
+16) Focus on Editor or close any pop up --> Esc
+17) View most recent opened files --> Ctrl + E
+18) Go to declarations --> Ctrl + B
+19) Go to implementation --> Ctrl + Alt+ B
+21) Run anything from anywhere --> tab Ctrl trice then run the file
+22) Comment --> Ctrl + / (for multiline--> Ctrl+Shift+/)
+23) Complete current statement --> Shift+Ctrl+Enter
+24) Format file --> Ctrl+Alt+L (whole file-->shift+Ctrl+Alt+L)
+25) Refactor --> Shift+Ctrl+Alt+T
+26) Find Action --> Shift + Ctrl + A
+27) Create a new class --> Alt+Shift+Enter
+______________________________________________________
+
+Unit Test
+
+1) Ctrl+Shift+T --> Create Unit Test, by selecting the method for which we want to create a test method.
+                --> go to that test method make the class as public and annotate with @SpringBootTest
+                --> Autowire the service class
+                --> inside the test method setup data; 
+                --> call the service method and store the actual result
+                --> assertEquals(expectedResult,actualResult);
+
+           i.e. --> inside the test method three parts are there: 
+                  a) setup data b) invoke actual service method c) verify or Assertions
+
+
+
+
+-------------------------------------------------------------------------------------------------------------
+debugTestMethod()--> resume/Fn+F9
+                 --> step over (next step) / Fn+F8 
+                 --> keep cursor and evaluate expression / alt+F8
+                 --> step into /Fn+F7
+                 --> step out /shift+F8
+
+ 
