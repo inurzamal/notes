@@ -40,4 +40,29 @@ class OclaSoapClientServiceTest {
         // Verify that the result is null (as indicated in your original method)
         assertNull(result);
     }
+    @Test
+    void senddataToOclaTestWhenException() {
+        // Create a sample request
+        AddDocumentCommunicationType request = new AddDocumentCommunicationType();
+        request.setSomeProperty("sampleValue");
+
+        // Mock the behavior of httpsConnector to throw an exception
+        when(httpsConnector.sendHttpsForStringResponse(eq("https://abco.com/9015/xyz"), anyString(), eq("http://service.xyz.com")))
+                .thenThrow(new RuntimeException("Simulated exception"));
+
+        // Mock the behavior of oclaCommunicationUtility
+        when(oclaCommunicationUtility.saveOCLAResponse(any(AddDocumentCommunicationResponseType.class)))
+                .thenReturn("documentId123"); // Provide a sample document ID
+
+        // Ensure the method throws an exception
+        assertThrows(RuntimeException.class, () -> {
+            oclaSoapClientService.senddataToOcla(request);
+        });
+
+        // Verify that the httpsConnector was called with the expected arguments
+        verify(httpsConnector).sendHttpsForStringResponse(eq("https://abco.com/9015/xyz"), anyString(), eq("http://service.xyz.com"));
+
+        // Verify that oclaCommunicationUtility.saveOCLAResponse was not called in case of an exception
+        verify(oclaCommunicationUtility, never()).saveOCLAResponse(any(AddDocumentCommunicationResponseType.class));
+    }
 }
