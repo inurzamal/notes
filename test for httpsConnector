@@ -20,6 +20,9 @@ class OclaSoapClientServiceTest {
         // Create a sample response XML
         String sampleResponseXml = "<AddDocumentCommunicationResponseType>...</AddDocumentCommunicationResponseType>";
 
+       // Convert the response object to XML
+        String sampleResponseXml = convertResponseToXml(response);
+
         // Mock the behavior of httpsConnector
         when(httpsConnector.sendHttpsForStringResponse(eq("https://abco.com/9015/xyz"), anyString(), eq("http://service.xyz.com")))
                 .thenReturn(sampleResponseXml);
@@ -64,5 +67,15 @@ class OclaSoapClientServiceTest {
 
         // Verify that oclaCommunicationUtility.saveOCLAResponse was not called in case of an exception
         verify(oclaCommunicationUtility, never()).saveOCLAResponse(any(AddDocumentCommunicationResponseType.class));
+    }
+
+    public String convertResponseToXml(AddDocumentCommunicationResponseType response) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(AddDocumentCommunicationResponseType.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+    
+        StringWriter writer = new StringWriter();
+        marshaller.marshal(response, writer);
+        return writer.toString();
     }
 }
