@@ -1,0 +1,66 @@
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
+
+@ExtendWith(MockitoExtension.class)
+class OclaSoapClientServiceTest {
+
+    @InjectMocks
+    private OclaSoapClientService oclaSoapClientService;
+
+    @Mock
+    private HttpsConnector httpsConnector;
+    @Mock
+    private OclaCommunicationUtility oclaCommunicationUtility;
+
+    @Test
+    void senddataToOclaTest() throws JAXBException {
+        // Create a sample request
+        AddDocumentCommunicationType request = createAddDocumentCommunicationType();
+
+        // Create a sample response XML
+        String sampleResponseXml = "<AddDocumentCommunicationResponseType>" +
+                "<WFFaultList>" +
+                "<wfFaultType>" +
+                "<faultCode>SampleFaultCode</faultCode>" +
+                "<faultType>SampleFaultType</faultType>" +
+                "<faultReasonText>SampleFaultReasonText</faultReasonText>" +
+                "<faultActor>SampleFaultActor</faultActor>" +
+                "<faultDetail>" +
+                "<detailProperty>SampleDetailPropertyValue</detailProperty>" +
+                "</faultDetail>" +
+                "</wfFaultType>" +
+                "</WFFaultList>" +
+                "<serviceCallUUID>SampleServiceCallUUID</serviceCallUUID>" +
+                "</AddDocumentCommunicationResponseType>";
+
+        // Mock the behavior of httpsConnector
+        when(httpsConnector.sendHttpsForStringResponse(eq("https://abco.com/9015/xyz"), anyString(), eq("http://service.xyz.com")))
+                .thenReturn(sampleResponseXml);
+
+        // Mock the behavior of oclaCommunicationUtility
+        when(oclaCommunicationUtility.saveOCLAResponse(any(AddDocumentCommunicationResponseType.class)))
+                .thenReturn("documentId123"); // Provide a sample document ID
+
+        // Call the method under test
+        String result = oclaSoapClientService.senddataToOcla(request);
+
+        // Verify that the httpsConnector was called with the expected arguments
+        verify(httpsConnector).sendHttpsForStringResponse(eq("https://abco.com/9015/xyz"), anyString(), eq("http://service.xyz.com"));
+
+        // Verify that oclaCommunicationUtility.saveOCLAResponse was called with a response
+        verify(oclaCommunicationUtility).saveOCLAResponse(any(AddDocumentCommunicationResponseType.class));
+
+        // Verify that the result is not null
+        assertNotNull(result);
+
+        // Verify that the result matches the expected document ID
+        assertEquals("documentId123", result);
+    }
+}
