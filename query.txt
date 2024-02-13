@@ -1,0 +1,61 @@
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface EscrowAnalysisRepository extends JpaRepository<EscrowAnalysis, Long> {
+
+    @Query(nativeQuery = true, value = "SELECT * FROM ESCROW_ANALYSIS " +
+            "WHERE TO_DATE(CRDT) < TO_DATE(TO_CHAR((SYSDATE - INTERVAL '1' DAY),'yyyy-MM-dd HH24:mi:ss'), 'yyyy-MM-dd HH24:mi:ss') " +
+            "AND SUCCESS_IND IS NULL")
+    List<EscrowAnalysis> getEscrowAnalysis();
+
+    @Modifying
+    @Query(nativeQuery = true, value = "DELETE FROM ESCROW_ANALYSIS " +
+            "WHERE TO_DATE(CRDT) < TO_DATE(TO_CHAR((SYSDATE - INTERVAL '1' DAY),'yyyy-MM-dd HH24:mi:ss'), 'yyyy-MM-dd HH24:mi:ss') " +
+            "AND SUCCESS_IND IS NULL")
+    void purgeEscrowAnalysis();
+
+    // Update query example
+    @Modifying
+    @Query(nativeQuery = true, value = "UPDATE ESCROW_ANALYSIS " +
+            "SET SUCCESS_IND = :successInd, RETURN_DESC = :returnDesc, MDUSR = :mdusr " +
+            "WHERE ESCROW_ANALYSISID = :escrowAnalysisId")
+    void updateEscrowAnalysis(Long escrowAnalysisId, String successInd, String returnDesc, String mdusr);
+}
+-----------------------------------------------------------------------------------------------------------------------
+
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Repository
+public interface EscrowAnalysisRepository extends JpaRepository<EscrowAnalysis, Long> {
+
+    @Query("SELECT e FROM EscrowAnalysis e WHERE " +
+           "TO_DATE(e.crDt) < TO_DATE(FUNCTION('TO_CHAR', CURRENT_DATE, 'yyyy-MM-dd HH24:mi:ss')) " +
+           "AND e.successInd IS NULL")
+    List<EscrowAnalysis> getEscrowAnalysis();
+
+    // If needed, you can add custom update and delete methods using @Modifying
+    @Modifying
+    @Transactional
+    @Query("UPDATE EscrowAnalysis e SET e.successInd = :successInd, e.returnDesc = :returnDesc, e.mdUsr = :mdUsr " +
+           "WHERE e.escrowAnalysisId = :escrowAnalysisId")
+    void updateEscrowAnalysis(@Param("escrowAnalysisId") Long escrowAnalysisId,
+                              @Param("successInd") String successInd,
+                              @Param("returnDesc") String returnDesc,
+                              @Param("mdUsr") String mdUsr);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM EscrowAnalysis e WHERE e.successInd IS NULL")
+    void purgeEscrowAnalysis();
+}
