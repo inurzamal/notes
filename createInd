@@ -1,0 +1,39 @@
+package com.yourpackage.batch.job;
+
+import com.yourpackage.repository.EscrowAnalysisRepository;
+import com.yourpackage.repository.NoEodProcShedRepository;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class CreateIndividualFinalAnalysisJob {
+
+    @Autowired
+    private JobBuilderFactory jobBuilderFactory;
+
+    @Autowired
+    private StepBuilderFactory stepBuilderFactory;
+
+    @Autowired
+    private NoEodProcShedRepository noEodProcShedRepository;
+
+    @Autowired
+    private EscrowAnalysisRepository escrowAnalysisRepository;
+
+    @Bean
+    public Step fetchAndProcessDataStep() {
+        // Implement your step logic here
+    }
+
+    @Bean
+    public Job createIndividualFinalAnalysisJob() {
+        return jobBuilderFactory.get("createIndividualFinalAnalysisJob")
+                .start(fetchAndProcessDataStep())
+                .build();
+    }
+}
