@@ -1,14 +1,21 @@
 package com.yourpackage.batch.job;
 
-import com.yourpackage.repository.EscrowAnalysisRepository;
-import com.yourpackage.repository.NoEodProcShedRepository;
+import com.yourpackage.batch.listener.JobCompletionNotificationListener;
+import com.yourpackage.entity.NoEodProcShed;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.persistence.EntityManagerFactory;
 
 @Configuration
 public class CreateIndividualFinalAnalysisJob {
@@ -20,20 +27,59 @@ public class CreateIndividualFinalAnalysisJob {
     private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
+    private JobCompletionNotificationListener jobCompletionNotificationListener;
+
+    @Autowired
     private NoEodProcShedRepository noEodProcShedRepository;
 
     @Autowired
-    private EscrowAnalysisRepository escrowAnalysisRepository;
+    private EntityManagerFactory entityManagerFactory;
 
     @Bean
-    public Step fetchAndProcessDataStep() {
-        // Implement your step logic here
+    public ItemReader<NoEodProcShed> reader() {
+        RepositoryItemReader<NoEodProcShed> reader = new RepositoryItemReader<>();
+        reader.setRepository(noEodProcShedRepository);
+        reader.setMethodName("findByRunSatDate");
+        reader.setPageSize(10); // Adjust the page size as needed
+        return reader;
     }
 
     @Bean
-    public Job createIndividualFinalAnalysisJob() {
+    public ItemProcessor<NoEodProcShed, NoEodProcShed> processor() {
+        // Implement your ItemProcessor logic
+        return item -> item; // Placeholder, replace with actual logic
+    }
+
+    @Bean
+    public ItemWriter<NoEodProcShed> writer() {
+        // Implement your ItemWriter logic
+        return items -> {
+            // Placeholder, replace with actual logic
+            for (NoEodProcShed item : items) {
+                // Process each item
+            }
+        };
+    }
+
+    @Bean
+    public Step fetchAndProcessDataStep(ItemReader<NoEodProcShed> reader,
+                                        ItemProcessor<NoEodProcShed, NoEodProcShed> processor,
+                                        ItemWriter<NoEodProcShed> writer) {
+        return stepBuilderFactory.get("fetchAndProcessDataStep")
+                .<NoEodProcShed, NoEodProcShed>chunk(10)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Job createIndividualFinalAnalysisJob(Step fetchAndProcessDataStep) {
         return jobBuilderFactory.get("createIndividualFinalAnalysisJob")
-                .start(fetchAndProcessDataStep())
+                .incrementer(new RunIdIncrementer())
+                .listener(jobCompletionNotificationListener)
+                .flow(fetchAndProcessDataStep)
+                .end()
                 .build();
     }
 }
