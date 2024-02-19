@@ -1,0 +1,2 @@
+    @Query(value = "SELECT NO_EOD_PROC_SCHED_ID, NO_EOD_DESC, RUN_SAT, RUN_SAT_DATE, CRDT, CRUSR, MDDT, MDUSR, RUN_AS " +
+            "FROM #{#entityName} WHERE RUN_SAT_DATE = to_char(current_date, 'MM/DD/YYYY')", nativeQuery = true)
