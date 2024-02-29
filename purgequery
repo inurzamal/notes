@@ -1,4 +1,0 @@
-    @Modifying
-    @Query(nativeQuery = true, value = "DELETE FROM ESCROW_ANALYSIS " +
-            "WHERE TO_DATE(CRDT) < TO_DATE(TO_CHAR((SYSDATE - INTERVAL '7' DAY),'yyyy-MM-dd HH24:mi:ss'), 'yyyy-MM-dd HH24:mi:ss') " +
-            "AND SUCCESS_IND IS NOT NULL")

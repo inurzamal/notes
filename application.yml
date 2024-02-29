@@ -1,5 +1,0 @@
-soap:
-  client:
-    keystore:
-      path: /path/to/your/keystore.p12
-      password: yourKeystorePassword

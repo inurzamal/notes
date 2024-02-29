@@ -1,5 +1,0 @@
-# Replace these values with your actual service endpoint and keystore details
-soap:
-  service-url: https://example.com/your-soap-endpoint
-  keystore-location: classpath:keystore.jks
-  keystore-password: your-keystore-password
