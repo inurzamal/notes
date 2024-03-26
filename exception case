@@ -1,0 +1,62 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
+public class JobLaunchControllerTest {
+
+    @Mock
+    private JobLauncher jobLauncher;
+
+    @Mock(name = "individualFinalAnalysisJob")
+    private Job finalAnalysisJob;
+
+    @Mock(name = "purgeEscrowAnalysisJob")
+    private Job purgeJob;
+
+    @InjectMocks
+    private JobLaunchController controller;
+
+    @Test
+    void testLaunchFinalAnalysisJob_Failure() throws Exception {
+        // Arrange
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        doThrow(new RuntimeException("Job launch failed")).when(jobLauncher).run(any(), any());
+
+        // Act & Assert
+        mockMvc.perform(get("/launchJob/finalAnalysisJob")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Error launching finalAnalysisJob: Job launch failed"));
+    }
+
+    @Test
+    void testLaunchPurgeJob_Failure() throws Exception {
+        // Arrange
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        doThrow(new RuntimeException("Job launch failed")).when(jobLauncher).run(any(), any());
+
+        // Act & Assert
+        mockMvc.perform(get("/launchJob/purgeJob")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Error launching purgeJob: Job launch failed"));
+    }
+}
