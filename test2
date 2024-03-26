@@ -1,0 +1,53 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(MockitoExtension.class)
+public class JobLaunchControllerTest {
+
+    @Mock
+    private JobLauncher jobLauncher;
+
+    @Mock(name = "individualFinalAnalysisJob")
+    private Job finalAnalysisJob;
+
+    @Mock(name = "purgeEscrowAnalysisJob")
+    private Job purgeJob;
+
+    @InjectMocks
+    private JobLaunchController controller;
+
+    @Test
+    void testLaunchFinalAnalysisJob_Success() throws Exception {
+        // Arrange
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+
+        // Act & Assert
+        mockMvc.perform(get("/launchJob/finalAnalysisJob")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testLaunchPurgeJob_Success() throws Exception {
+        // Arrange
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+
+        // Act & Assert
+        mockMvc.perform(get("/launchJob/purgeJob")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+}
