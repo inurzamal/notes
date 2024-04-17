@@ -1,0 +1,68 @@
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecutionException;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+
+@SpringBootApplication
+public class DemoApplication implements CommandLineRunner {
+
+    @Autowired
+    private JobLauncher jobLauncher;
+
+    @Autowired
+    private Job finalAnalysisJob;
+
+    @Autowired
+    private Job purgeJob;
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (args.length == 0) {
+            System.err.println("Please specify a job to run ('finalanalysis' or 'purge').");
+            return;
+        }
+
+        String jobName = args[0].toLowerCase();
+        Job jobToRun = null;
+
+        if ("finalanalysis".equals(jobName)) {
+            jobToRun = finalAnalysisJob;
+        } else if ("purge".equals(jobName)) {
+            jobToRun = purgeJob;
+        } else {
+            System.err.println("Invalid job specified. Use 'finalanalysis' or 'purge'.");
+            return;
+        }
+
+        // Define job parameters
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("startAt", System.currentTimeMillis())
+                .toJobParameters();
+
+        try {
+            // Launch the selected job
+            jobLauncher.run(jobToRun, jobParameters);
+            System.out.println(jobName + " job launched successfully.");
+        } catch (JobExecutionException e) {
+            System.err.println("Error launching " + jobName + " job: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+
+
+------------------------------------------------------------
+
+cf runtask launchandpolltask -o "ca02492-dev" -s "dev" -a "ca02492-mccs-batch-dev" -j "loader.main=com.wellsfargo.mccs.batch.orchestra.DemoApplication finalanalysis" -t "spring_boot" -r https://api.system.temr-clfn-n-03.cf.wellsfargo.net -u "dev01"
+
+
+cf runtask launchandpolltask -o "ca02492-dev" -s "dev" -a "ca02492-mccs-batch-dev" -j "java -jar app.jar finalanalysis" -t "spring_boot" -r https://api.system.temr-clfn-n-03.cf.wellsfargo.net -u "dev01"
