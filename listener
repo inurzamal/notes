@@ -41,3 +41,53 @@ public void afterJob(JobExecution jobExecution) {
         SpringApplication.exit(context, () -> 1); // Exit with failure status
     }
 }
+
+
+JUNIT
+---------
+
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+public class JobCompletionNotificationListenerTest {
+
+    @Mock
+    private ConfigurableApplicationContext mockContext;
+
+    @InjectMocks
+    private JobCompletionNotificationListener listener;
+
+    @Test
+    public void testAfterJobCompleted() {
+        JobExecution jobExecution = new JobExecution(1L);
+        jobExecution.setStatus(BatchStatus.COMPLETED);
+
+        listener.afterJob(jobExecution);
+
+        verify(listener.getLogger()).info("Job completed successfully: {}", jobExecution.getJobInstance().getJobName());
+        verify(SpringApplication.class, times(1)).exit(eq(mockContext), any());
+    }
+
+    @Test
+    public void testAfterJobFailed() {
+        JobExecution jobExecution = new JobExecution(1L);
+        jobExecution.setStatus(BatchStatus.FAILED);
+
+        listener.afterJob(jobExecution);
+
+        verify(listener.getLogger()).error("Job failed: {}", jobExecution.getJobInstance().getJobName());
+        verify(SpringApplication.class, times(1)).exit(eq(mockContext), any());
+    }
+}
+
