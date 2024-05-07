@@ -1,0 +1,23 @@
+mccs:
+  datasource:
+    driverClassName: asff
+    url: https://dhfq
+    username: xyz
+    password: abc
+    schema: edgedo
+
+mws:
+  httpConnection:
+    host: ${mws_httpConnection_host}
+
+msp:
+  "708":
+    UserID: ${vcap.services.msp.credentials.708.UserID}
+    SystemID: ${vcap.services.msp.credentials.708.SystemID}
+    RACFId: ${vcap.services.msp.credentials.708.RACFId}
+    RACFPassword: ${vcap.services.msp.credentials.708.RACFPassword}
+  "936":
+    UserID: ${vcap.services.msp.credentials.936.UserID}
+    SystemID: ${vcap.services.msp.credentials.936.SystemID}
+    RACFId: ${vcap.services.msp.credentials.936.RACFId}
+    RACFPassword: ${vcap.services.msp.credentials.936.RACFPassword}
