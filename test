@@ -1,0 +1,105 @@
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class OAuthenticationServiceTest {
+
+    @Mock
+    private WebClient.Builder webClientBuilder;
+
+    @Mock
+    private WebClient webClient;
+
+    @Mock
+    private WebClient.RequestBodyUriSpec requestBodyUriSpec;
+
+    @Mock
+    private WebClient.RequestHeadersSpec requestHeadersSpec;
+
+    @Mock
+    private WebClient.ResponseSpec responseSpec;
+
+    @InjectMocks
+    private OAuthenticationService oAuthenticationService;
+
+    @Before
+    public void setUp() {
+        when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
+        when(webClientBuilder.build()).thenReturn(webClient);
+        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.headers(any())).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+    }
+
+    @Test
+    public void testGetOathAccessToken_CachedToken() {
+        oAuthenticationService.cachedToken = "cachedToken";
+        oAuthenticationService.tokenExpirationTime = Instant.now().plusSeconds(60);
+
+        Mono<String> tokenMono = oAuthenticationService.getOathAccessToken();
+
+        StepVerifier.create(tokenMono)
+                .expectNext("cachedToken")
+                .verifyComplete();
+
+        verify(webClient, never()).post();
+    }
+
+    @Test
+    public void testGetOathAccessToken_NewToken() {
+        Map<String, String> responseMap = new HashMap<>();
+        responseMap.put("access_token", "newAccessToken");
+        responseMap.put("expires_in", "300");
+
+        when(responseSpec.bodyToMono(any(Class.class))).thenReturn(Mono.just(responseMap));
+
+        Mono<String> tokenMono = oAuthenticationService.getOathAccessToken();
+
+        StepVerifier.create(tokenMono)
+                .expectNext("newAccessToken")
+                .verifyComplete();
+
+        ArgumentCaptor<HttpHeaders> headersCaptor = ArgumentCaptor.forClass(HttpHeaders.class);
+        verify(requestHeadersSpec).headers(headersCaptor.capture());
+
+        HttpHeaders headers = headersCaptor.getValue();
+        String expectedAuthHeader = "Basic " + Base64.getEncoder().encodeToString("authString".getBytes(StandardCharsets.UTF_8));
+        assertEquals(expectedAuthHeader, headers.getFirst("Authorization"));
+        assertEquals("application/x-www-form-urlencoded", headers.getFirst("Content-Type"));
+    }
+
+    @Test
+    public void testGetOathAccessToken_ErrorResponse() {
+        when(responseSpec.bodyToMono(any(Class.class))).thenReturn(Mono.error(
+                new WebClientResponseException("Error", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        "Internal Server Error", null, null, null)));
+
+        Mono<String> tokenMono = oAuthenticationService.getOathAccessToken();
+
+        StepVerifier.create(tokenMono)
+                .expectError(WebClientResponseException.class)
+                .verify();
+
+        verify(requestHeadersSpec).retrieve();
+    }
+}
