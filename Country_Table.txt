@@ -1,0 +1,59 @@
+CREATE TABLE Country_Table (
+    Country VARCHAR(25) NOT NULL,
+    Country_Mnemonic VARCHAR(5),
+    ISO_A3_Code VARCHAR(3),
+    Region VARCHAR(25),
+    Subregion VARCHAR(25),
+    Bloomberg_Region VARCHAR(25),
+    CCI VARCHAR(5),
+    Review_Class VARCHAR(18),
+    Currency VARCHAR(25),
+    Currency_Code VARCHAR(5),
+    Select_for_Report_YN BYTEINT DEFAULT 0, -- Teradata uses BYTEINT for boolean-like fields (0/1)
+    Schedule_for_Review BYTEINT DEFAULT 0,
+    Show_Country BYTEINT DEFAULT 0,
+    Development_Classification VARCHAR(200) DEFAULT 'Not Classified',
+    Financial_Center BYTEINT DEFAULT 0,
+    Sub_sovereign BYTEINT DEFAULT 0,
+    Sovereign VARCHAR(2),
+    Supranational BYTEINT DEFAULT 0,
+    Last_Review TIMESTAMP,
+    Expiry TIMESTAMP,
+    Extension TIMESTAMP,
+    Review_Scheduled TIMESTAMP,
+    View_Meeting_Date TIMESTAMP,
+    Submission_Date TIMESTAMP,
+    UW_Completion_Date TIMESTAMP,
+    Schedule_Comment VARCHAR(75),
+    FX_Rate_1996 FLOAT,
+    Country_Summary CLOB, -- Teradata uses CLOB for large text fields
+    Proposed_CRG INTEGER,
+    Proposed_CRR_Outlook VARCHAR(15) DEFAULT 'Stable', -- Assuming a default value of 'Stable'
+    Proposed_CRR FLOAT,
+    CRR_Comments CLOB,
+    Benchmark_Comments CLOB,
+    SCRR_Comments CLOB,
+    Overall_Score_Comments CLOB,
+    Economic_Comments CLOB,
+    Political_Comments CLOB,
+    Banking_Comments CLOB,
+    Rating_Triggers CLOB,
+    Exposure_Comments CLOB,
+    CRRW_Revised TIMESTAMP,
+    Analyst VARCHAR(50),
+    FX_Rate_2005 FLOAT,
+    LastUpdatedOn TIMESTAMP,
+    Worksheet_LastUpdatedOn TIMESTAMP,
+    PRIMARY KEY (Country)
+);
+
+-- Adding the foreign key constraints to link Region and Subregion fields to reference tables
+
+ALTER TABLE Country_Table 
+ADD CONSTRAINT FK_Country_Region FOREIGN KEY (Region) 
+REFERENCES CountryRegion_Table (Region);
+
+ALTER TABLE Country_Table 
+ADD CONSTRAINT FK_Country_Subregion FOREIGN KEY (Subregion) 
+REFERENCES CountrySubregion_Table (Subregion);
+
