@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <servers>
+        <server>
+            <username>k078663</username>
+            <password>xxxx</password>
+            <id>central</id>
+        </server>
+        <server>
+            <username>k078663</username>
+            <password>xxxx</password>
+            <id>snapshots</id>
+        </server>
+        <server>
+            <username>k078663</username>
+            <password>xxxx</password>
+            <id>central1</id>
+        </server>
+        <server>
+            <username>k078663</username>
+            <password>xxxx</password>
+            <id>snapshots1</id>
+        </server>
+        <server>
+            <username>k078663</username>
+            <password>xxxx</password>
+            <id>central2</id>
+        </server>
+        <server>
+            <username>k078663</username>
+            <password>xxxx</password>
+            <id>snapshots2</id>
+        </server>
+        <server>
+            <username>k078663</username>
+            <password>xxxx</password>
+            <id>central3</id>
+        </server>
+        <server>
+            <username>k078663</username>
+            <password>xxxx</password>
+            <id>snapshots3</id>
+        </server>
+    </servers>
+
+    <profiles>
+        <profile>
+            <repositories>
+                <repository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>central</id>
+                    <name>maven-wf-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-virtual</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>snapshots</id>
+                    <name>maven-wf-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-virtual</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>central1</id>
+                    <name>maven-external-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-external-virtual</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>snapshots1</id>
+                    <name>maven-external-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-external-virtual</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>central2</id>
+                    <name>maven-wf-legacy-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-legacy-virtual</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>snapshots2</id>
+                    <name>maven-wf-legacy-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-legacy-virtual</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>central3</id>
+                    <name>maven-2ame-legacy-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-2ame-legacy-virtual</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>snapshots3</id>
+                    <name>maven-2ame-legacy-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-2ame-legacy-virtual</url>
+                </repository>
+            </repositories>
+
+            <pluginRepositories>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>central</id>
+                    <name>maven-wf-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-virtual</url>
+                </pluginRepository>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>snapshots</id>
+                    <name>maven-wf-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-virtual</url>
+                </pluginRepository>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>central1</id>
+                    <name>maven-external-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-external-virtual</url>
+                </pluginRepository>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>snapshots1</id>
+                    <name>maven-external-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-external-virtual</url>
+                </pluginRepository>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>central2</id>
+                    <name>maven-wf-legacy-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-legacy-virtual</url>
+                </pluginRepository>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>true</enabled> <!-- Changed to true -->
+                    </snapshots>
+                    <id>snapshots2</id>
+                    <name>maven-wf-legacy-virtual</name>
+                    <url>https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-legacy-virtual</url>
+                </pluginRepository>
+            </pluginRepositories>
+
+            <id>artifactory</id>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>artifactory</activeProfile>
+    </activeProfiles>
+</settings>
