@@ -1,53 +1,58 @@
-CREATE TABLE Country_Table (
+CREATE MULTISET TABLE D_EIW_ERA_FRR_OLTP.Country_Table
+  NO FALLBACK,
+  NO BEFORE JOURNAL,
+  NO AFTER JOURNAL,
+  CHECKSUM = DEFAULT,
+  DEFAULT MERGEBLOCKRATIO,
+  MAP = TD_MAP1
+(
     Country VARCHAR(25) NOT NULL,
-    Country_Mnemonic VARCHAR(5),
-    ISO_A3_Code VARCHAR(3),
-    Region VARCHAR(25),
-    Subregion VARCHAR(25),
-    Bloomberg_Region VARCHAR(25),
-    CCI VARCHAR(5),
-    Review_Class VARCHAR(18),
-    Currency VARCHAR(25),
-    Currency_Code VARCHAR(5),
-    Select_for_Report_YN BYTEINT DEFAULT 0, -- Teradata uses BYTEINT for boolean-like fields (0/1)
-    Schedule_for_Review BYTEINT DEFAULT 0,
-    Show_Country BYTEINT DEFAULT 0,
+    Country_Mnemonic VARCHAR(5) NULL,
+    ISO_A3_Code VARCHAR(3) NULL,
+    Region VARCHAR(25) NULL,
+    Subregion VARCHAR(25) NULL,
+    Bloomberg_Region VARCHAR(25) NULL,
+    CCI VARCHAR(5) NULL,
+    Review_Class VARCHAR(18) NULL,
+    Currency VARCHAR(25) NULL,
+    Currency_Code VARCHAR(5) NULL,
+    Select_for_Report_YN BYTEINT DEFAULT 0 NULL,
+    Schedule_for_Review BYTEINT DEFAULT 0 NULL,
+    Show_Country BYTEINT DEFAULT 0 NULL,
     Development_Classification VARCHAR(200) DEFAULT 'Not Classified',
-    Financial_Center BYTEINT DEFAULT 0,
-    Sub_sovereign BYTEINT DEFAULT 0,
-    Sovereign VARCHAR(2),
-    Supranational BYTEINT DEFAULT 0,
-    Last_Review TIMESTAMP,
-    Expiry TIMESTAMP,
-    Extension TIMESTAMP,
-    Review_Scheduled TIMESTAMP,
-    View_Meeting_Date TIMESTAMP,
-    Submission_Date TIMESTAMP,
-    UW_Completion_Date TIMESTAMP,
-    Schedule_Comment VARCHAR(75),
-    FX_Rate_1996 FLOAT,
-    Country_Summary CLOB, -- Teradata uses CLOB for large text fields
-    Proposed_CRG INTEGER,
-    Proposed_CRR_Outlook VARCHAR(15) DEFAULT 'Stable', -- Assuming a default value of 'Stable'
-    Proposed_CRR FLOAT,
-    CRR_Comments CLOB,
-    Benchmark_Comments CLOB,
-    SCRR_Comments CLOB,
-    Overall_Score_Comments CLOB,
-    Economic_Comments CLOB,
-    Political_Comments CLOB,
-    Banking_Comments CLOB,
-    Rating_Triggers CLOB,
-    Exposure_Comments CLOB,
-    CRRW_Revised TIMESTAMP,
-    Analyst VARCHAR(50),
-    FX_Rate_2005 FLOAT,
-    LastUpdatedOn TIMESTAMP,
-    Worksheet_LastUpdatedOn TIMESTAMP,
-    PRIMARY KEY (Country)
-);
-
--- Adding the foreign key constraints to link Region and Subregion fields to reference tables
+    Financial_Center BYTEINT DEFAULT 0 NULL,
+    Sub_sovereign BYTEINT DEFAULT 0 NULL,
+    Sovereign VARCHAR(2) NULL,
+    Supranational BYTEINT DEFAULT 0 NULL,
+    Last_Review TIMESTAMP(0) WITH TIME ZONE NULL,
+    Expiry TIMESTAMP(0) WITH TIME ZONE NULL,
+    Extension TIMESTAMP(0) WITH TIME ZONE NULL,
+    Review_Scheduled TIMESTAMP(0) WITH TIME ZONE NULL,
+    View_Meeting_Date TIMESTAMP(0) WITH TIME ZONE NULL,
+    Submission_Date TIMESTAMP(0) WITH TIME ZONE NULL,
+    UW_Completion_Date TIMESTAMP(0) WITH TIME ZONE NULL,
+    Schedule_Comment VARCHAR(75) NULL,
+    FX_Rate_1996 FLOAT NULL, 
+    Country_Summary CLOB NULL, 
+    Proposed_CRG INTEGER NULL,
+    Proposed_CRR_Outlook VARCHAR(15) NULL,
+    Proposed_CRR FLOAT NULL, 
+    CRR_Comments CLOB NULL,
+    Benchmark_Comments CLOB NULL,
+    SCRR_Comments CLOB NULL,
+    Overall_Score_Comments CLOB NULL,
+    Economic_Comments CLOB NULL,
+    Political_Comments CLOB NULL,
+    Banking_Comments CLOB NULL,
+    Rating_Triggers CLOB NULL,
+    Exposure_Comments CLOB NULL,
+    CRRW_Revised TIMESTAMP(0) WITH TIME ZONE NULL,
+    Analyst VARCHAR(50) NULL,
+    FX_Rate_2005 FLOAT NULL,
+    LastUpdatedOn TIMESTAMP(0) WITH TIME ZONE NULL,
+    Worksheet_LastUpdatedOn TIMESTAMP(0) WITH TIME ZONE NULL
+)
+UNIQUE PRIMARY INDEX (Country);
 
 ALTER TABLE Country_Table 
 ADD CONSTRAINT FK_Country_Region FOREIGN KEY (Region) 
@@ -56,4 +61,3 @@ REFERENCES CountryRegion_Table (Region);
 ALTER TABLE Country_Table 
 ADD CONSTRAINT FK_Country_Subregion FOREIGN KEY (Subregion) 
 REFERENCES CountrySubregion_Table (Subregion);
-
