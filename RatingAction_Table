@@ -1,0 +1,25 @@
+CREATE MULTISET TABLE D_EIW_ERA_FRR_OLTP.RatingAction_Table
+NO FALLBACK,
+NO BEFORE JOURNAL,
+NO AFTER JOURNAL,
+CHECKSUM = DEFAULT,
+DEFAULT MERGEBLOCKRATIO,
+MAP = TD_MAP1
+(
+    Country VARCHAR(25) NOT NULL,
+    Rating_Date TIMESTAMP(0) NOT NULL,
+    Old_CRG INTEGER NULL,
+    Old_CRR_Outlook VARCHAR(15) NULL,
+    New_CRG INTEGER NULL,
+    New_CRR_Outlook VARCHAR(15) NULL,
+    Rating_Comment CLOB NULL,
+    Old_CRR FLOAT NULL,
+    New_CRR FLOAT NULL,
+    -- Add other columns if needed
+)
+UNIQUE PRIMARY INDEX (Country, Rating_Date);
+
+-- Add foreign key constraint for Country
+ALTER TABLE RatingAction_Table
+ADD CONSTRAINT FK_RatingAction_Country FOREIGN KEY (Country)
+REFERENCES Country_Table (Country);
