@@ -143,3 +143,6 @@ CREATE MULTISET TABLE D_EIW_ERA_FRR_OLTP.CountryRiskData_Table
     Ratings_LastUpdatedOn TIMESTAMP(0) WITH TIME ZONE NULL
 )
 UNIQUE PRIMARY INDEX (Country, Year);
+ALTER TABLE CountryRiskData_Table
+ADD CONSTRAINT FK_CountryRiskData_Country FOREIGN KEY (Country)
+REFERENCES Country_Table (Country);
