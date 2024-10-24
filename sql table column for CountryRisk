@@ -1,0 +1,137 @@
+Here are the column names with square brackets for those containing spaces:
+
+Country  
+Year  
+CRG  
+[CRR Outlook]  
+CRR  
+IIRating  
+IIRank  
+EuromoneyRating  
+EuromoneyRank  
+[Moody's LT Rating]  
+[Moody's ST Rating]  
+[Moody's Outlook]  
+[S&P LT Rating]  
+[S&P ST Rating]  
+[S&P Outlook]  
+[Fitch LT FX Rating]  
+[Fitch ST FX Rating]  
+[Fitch Outlook]  
+WB_DBIrank  
+WB_VtHgdp  
+WB_VtHrank  
+OECD_CRC  
+[EIU CoRisk Rating]  
+[EIU CoRisk Score]  
+EIU_PRR  
+PRS_PRR  
+EIU_ORRn  
+eSF Rank  
+eSF Score  
+eSF Developments  
+eSFbi Score  
+eSFbi Rank  
+FH_FITW  
+FH_PR  
+FH_CL  
+FFP_FSIscore  
+FfP_FSIrank  
+HF_IEF  
+ShadEcon  
+ICR_Composite  
+ICR_OFAC  
+ICR_CreditRisk  
+ICR_Compliance  
+ICR_Operational  
+ICR_Reputational  
+ICR_TravelRisk  
+TI_CPIrank  
+TI_CPIscore  
+TI_CPIpercent  
+UN_HDI  
+UN_HDIrank  
+WEF_GCIrank  
+WEF_GCIscore  
+WEF_FDIrank  
+WEF_FDIscore  
+WGI_VA  
+WGI_PS  
+WGI_GE  
+WGI_RQ  
+WGI_RL  
+WGI_CC  
+[ICERC Trade Rating]  
+[ICERC Other Rating]  
+[ICERC ATRR]  
+FTW  
+TDBT  
+NTDT  
+TSTD  
+ARRS  
+PRPP  
+TINT  
+FRES  
+BALC  
+BALM  
+TOTX  
+TOTM  
+MEXP  
+MIMP  
+XSER  
+MSER  
+XIPD  
+MIPD  
+GNTR  
+PNTR  
+INVF  
+INVP  
+[XRP KRPD]  
+ENDR  
+XRRE  
+CXRRE  
+GDPD  
+CGDP  
+DGDP  
+YPCP  
+POPN  
+UNEM  
+DCPI  
+SMN2  
+DMN2  
+SODC  
+SODD  
+LRAT  
+PBAX  
+PSBR  
+PUDP  
+BREP  
+BINT  
+OR_XC  
+OR_FC  
+OR_CB  
+[Revision Date]  
+[EIU BSR]  
+[Moodys BFSR]  
+[Moodys_GovtSupport]  
+FitchSAIR  
+FitchBSI  
+FitchMPI  
+SP_BICRA  
+SP_GovtSupport  
+[BkSys Assets]  
+[BkSys Loans]  
+[BkSys LLR]  
+[BkSys NPL]  
+[BkSys Deposits]  
+[BkSys Equity]  
+[BkSys NetInc]  
+[BkSys NumBks]  
+[BkSys TFSL]  
+PGDP  
+FRLI  
+FRAS  
+BR_LastUpdatedOn  
+ER_LastUpdatedOn  
+PR_LastUpdatedOn  
+Ratings_LastUpdatedOn
