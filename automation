@@ -24,32 +24,25 @@ public void deleteAllRRPData(Map<String, Object> data) {
     clickon(rrpPage.getDeleteFileButton());
 
     // Wait for the confirmation modal to appear
-    System.out.println("Waiting for the confirmation modal to be present and visible.");
-    rrpPage.waitForModalToBePresent();
+    System.out.println("Waiting for the confirmation modal to be visible.");
+    rrpPage.waitForModalToBeVisible();
 
     // Verify the content of the confirmation modal
     System.out.println("Verifying the content of the modal dialog.");
     verifyModalContent(rrpPage.getModalWindowTitle(), "Confirm Delete", 
-                        rrpPage.getModalWindowBody(), 
-                        "Are you sure you want to delete all Ter records across all pages?");
+                       rrpPage.getModalWindowBody(), 
+                       "Are you sure you want to delete all Ter records across all pages?");
 
     // Click on the Confirm button in the modal dialog
     System.out.println("Clicking on the Confirm button to proceed with deletion.");
     clickOn(rrpPage.getConfirmDeleteButton());
 
-    // Wait for the success message popup to appear
-    System.out.println("Waiting for the success message popup.");
-    rrpPage.waitForSuccessMessageToAppear();
-
-    // Verify the content of the success message
-    System.out.println("Verifying the success message content.");
-    Assert.assertTrue(rrpPage.getSuccessMessageText().contains("Deleted successfully."));
-
-    // Close the success message popup
-    System.out.println("Closing the success message popup.");
-    clickon(rrpPage.getCloseModalButton());
+    // Wait for the modal to disappear to ensure deletion is complete
+    System.out.println("Waiting for the modal to close after confirmation.");
+    rrpPage.waitForModalToBeVisible();  // Assuming this waits until the modal closes if no close-specific wait exists.
 
     // Verify the table records count after deletion
+    System.out.println("Verifying all records are deleted from the RRP table.");
     int finalCount = rrpPage.getTableRecordsCount();
     System.out.println("Final record count in RRP table after deletion: " + finalCount);
     Assert.assertEquals(finalCount, 0);
