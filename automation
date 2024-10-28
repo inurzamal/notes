@@ -49,3 +49,32 @@ public void deleteAllRRPData(Map<String, Object> data) {
     System.out.println("Logging out from the ROLM application.");
     rolm.logoutFromRolmApplication();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+System.out.println("Waiting for the confirmation modal to be present and visible.");
+rrpPage.waitForModalToBePresent(); // Make sure this method waits for the modal's visibility.
+
+// Now verify the modal content
+System.out.println("Verifying the content of the modal dialog.");
+verifyModalContent(rrpPage.getModalWindowTitle(), "Confirm Delete", 
+                   rrpPage.getModalWindowBody(), 
+                   "Are you sure you want to delete all Ter records across all pages?");
+
+// Click on the Confirm button in the modal dialog
+System.out.println("Clicking on the Confirm button to proceed with deletion.");
+clickOn(rrpPage.getConfirmDeleteButton());
+System.out.println("Waiting for the success message popup.");
+rrpPage.waitForSuccessMessageToAppear();
+
+System.out.println("Verifying the success message content.");
+Assert.assertTrue(rrpPage.getSuccessMessageText().contains("Deleted successfully."));
