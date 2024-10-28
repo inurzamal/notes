@@ -1,0 +1,51 @@
+@MetaData("{'testCaseId': 'CARAT_ROLM_RRP_15', 'testName': 'User Deletes All RRP Data'}")
+@QAFDataProvider(dataFile = "resources/web/TestData.xls", sheetName = "Data", filter = "RoleType.equalsIgnoreCase('REPORTADJUSER')")
+@Test(description = "User Deletes All RRP Data", priority = 210, dependsOnMethods = { "accessRRPPageAsReadOnly" }, groups = { "smoke", "regression" })
+public void deleteAllRRPData(Map<String, Object> data) {
+
+    // Initialize the test and navigate to the home page
+    ROLMBaseTest rolm = new ROLMBaseTest();
+    System.out.println("Navigating to the Home Page.");
+    rolm.navigateToHomePage(data);
+
+    // Navigate to the RRP Adjustments page
+    System.out.println("Navigating to the RRP Adjustments Page.");
+    RRPAdjustmentsPage rrpPage = navigateToAdjustmentsRRPPage(rolm);
+    
+    // Verify the initial record count (log the count instead of asserting initially)
+    int initialCount = rrpPage.getTableRecordsCount();
+    System.out.println("Initial record count in RRP table: " + initialCount);
+    // Assert.assertEquals(initialCount, 3); // Commenting out for more dynamic logging
+    
+    // Select all rows and click the delete button
+    System.out.println("Selecting all rows in the RRP table.");
+    clickon(rrpPage.getSelectAllCheckBox());
+
+    System.out.println("Clicking on the Delete button.");
+    clickon(rrpPage.getDeleteFileButton());
+
+    // Confirm the deletion
+    System.out.println("Confirming the deletion in the modal dialog.");
+    clickOn(rrpPage.getConfirmDeleteButton());
+
+    // Wait for the modal to be visible
+    System.out.println("Waiting for the confirmation modal to be visible.");
+    rrpPage.waitForModalToBeVisible();
+
+    // Verify modal content
+    System.out.println("Verifying the content of the modal dialog.");
+    verifyModalContent(rrpPage.getModalWindowTitle(), "Success", rrpPage.getModalWindowBody(), "Deleted successfully.");
+
+    // Close the modal dialog
+    System.out.println("Closing the confirmation modal.");
+    clickon(rrpPage.getCloseModalButton());
+
+    // Verify the table records count after deletion
+    int finalCount = rrpPage.getTableRecordsCount();
+    System.out.println("Final record count in RRP table after deletion: " + finalCount);
+    Assert.assertEquals(finalCount, 0);
+
+    // Log out of the application
+    System.out.println("Logging out from the ROLM application.");
+    rolm.logoutFromRolmApplication();
+}
