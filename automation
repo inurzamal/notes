@@ -12,11 +12,10 @@ public void deleteAllRRPData(Map<String, Object> data) {
     System.out.println("Navigating to the RRP Adjustments Page.");
     RRPAdjustmentsPage rrpPage = navigateToAdjustmentsRRPPage(rolm);
     
-    // Verify the initial record count (log the count instead of asserting initially)
+    // Verify the initial record count (log the count for reference)
     int initialCount = rrpPage.getTableRecordsCount();
     System.out.println("Initial record count in RRP table: " + initialCount);
-    // Assert.assertEquals(initialCount, 3); // Commenting out for more dynamic logging
-    
+
     // Select all rows and click the delete button
     System.out.println("Selecting all rows in the RRP table.");
     clickon(rrpPage.getSelectAllCheckBox());
@@ -24,20 +23,30 @@ public void deleteAllRRPData(Map<String, Object> data) {
     System.out.println("Clicking on the Delete button.");
     clickon(rrpPage.getDeleteFileButton());
 
-    // Confirm the deletion
-    System.out.println("Confirming the deletion in the modal dialog.");
+    // Wait for the confirmation modal to appear
+    System.out.println("Waiting for the confirmation modal to be present and visible.");
+    rrpPage.waitForModalToBePresent();
+
+    // Verify the content of the confirmation modal
+    System.out.println("Verifying the content of the modal dialog.");
+    verifyModalContent(rrpPage.getModalWindowTitle(), "Confirm Delete", 
+                        rrpPage.getModalWindowBody(), 
+                        "Are you sure you want to delete all Ter records across all pages?");
+
+    // Click on the Confirm button in the modal dialog
+    System.out.println("Clicking on the Confirm button to proceed with deletion.");
     clickOn(rrpPage.getConfirmDeleteButton());
 
-    // Wait for the modal to be visible
-    System.out.println("Waiting for the confirmation modal to be visible.");
-    rrpPage.waitForModalToBeVisible();
+    // Wait for the success message popup to appear
+    System.out.println("Waiting for the success message popup.");
+    rrpPage.waitForSuccessMessageToAppear();
 
-    // Verify modal content
-    System.out.println("Verifying the content of the modal dialog.");
-    verifyModalContent(rrpPage.getModalWindowTitle(), "Success", rrpPage.getModalWindowBody(), "Deleted successfully.");
+    // Verify the content of the success message
+    System.out.println("Verifying the success message content.");
+    Assert.assertTrue(rrpPage.getSuccessMessageText().contains("Deleted successfully."));
 
-    // Close the modal dialog
-    System.out.println("Closing the confirmation modal.");
+    // Close the success message popup
+    System.out.println("Closing the success message popup.");
     clickon(rrpPage.getCloseModalButton());
 
     // Verify the table records count after deletion
@@ -49,32 +58,3 @@ public void deleteAllRRPData(Map<String, Object> data) {
     System.out.println("Logging out from the ROLM application.");
     rolm.logoutFromRolmApplication();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-System.out.println("Waiting for the confirmation modal to be present and visible.");
-rrpPage.waitForModalToBePresent(); // Make sure this method waits for the modal's visibility.
-
-// Now verify the modal content
-System.out.println("Verifying the content of the modal dialog.");
-verifyModalContent(rrpPage.getModalWindowTitle(), "Confirm Delete", 
-                   rrpPage.getModalWindowBody(), 
-                   "Are you sure you want to delete all Ter records across all pages?");
-
-// Click on the Confirm button in the modal dialog
-System.out.println("Clicking on the Confirm button to proceed with deletion.");
-clickOn(rrpPage.getConfirmDeleteButton());
-System.out.println("Waiting for the success message popup.");
-rrpPage.waitForSuccessMessageToAppear();
-
-System.out.println("Verifying the success message content.");
-Assert.assertTrue(rrpPage.getSuccessMessageText().contains("Deleted successfully."));
