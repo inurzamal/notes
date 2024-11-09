@@ -1,0 +1,36 @@
+<!-- Header Rows -->
+<div class="serm-table-header sticky-header">
+  <ng-container *ngFor="let header of headers; let j = index">
+    <ng-container *ngIf="!(header.label === 'Select' && !needActions) && !(header.label === 'ACTIONS' && !needActions)">
+      <div [ngClass]="header.class + ' d-flex'">
+        <div>{{ header.label | titlecase }}</div>
+        <!-- Sorting logic if any -->
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
+
+<!-- Data Rows -->
+<div class="serm-table-body">
+  <ng-container *ngIf="viewData && viewData.length > 0; else noData">
+    <div *ngFor="let g of viewData | slice: (page.currentPage * page.recordsPerPage) - page.recordsPerPage : page.currentPage * page.recordsPerPage; index as i">
+      <div class="serm-table-row-scroll">
+        <ng-container *ngFor="let headerField of headers; let j = index">
+          <ng-container *ngIf="!(headerField.label === 'Select' && !needActions) && !(headerField.label === 'ACTIONS' && !needActions)">
+            <div [ngClass]="headerField.class">
+              <ng-container *ngIf="g.open; else readOnly">
+                <div>{{ g[headerField.field] }}</div>
+              </ng-container>
+              <ng-template #readOnly>
+                <div>{{ g[headerField.field] }}</div>
+              </ng-template>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #noData>
+    <div class="serm-table-body-empty">No data available</div>
+  </ng-template>
+</div>
