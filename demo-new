@@ -12,7 +12,7 @@
 
 <div class="serm-table-scroll expandable-table sticky-header-table">
   <div class="serm-table-header sticky-header">
-    <div [class]="header.class + ' d-flex'" *ngFor="let header of displayHeaders">
+    <div [class]="header.class + ' d-flex'" *ngFor="let header of headers">
       <div *ngIf="!(header.label === 'Select' && !needActions) && !(header.label === 'ACTIONS' && !needActions)">
         {{header.label | titlecase}}
         <input *ngIf="header.label === 'Select' && needActions" class="page-select" type="checkbox" [name]=" + 'page-checkbox'"
@@ -21,7 +21,7 @@
                id="cfr1PageSelectAll">
       </div>
       
-      <div *ngIf="header.sortable && (needActions || (header.label !== 'Select' && header.label !== 'ACTIONS'))"
+      <div *ngIf="!(header.label === 'Select' && !needActions) && !(header.label === 'ACTIONS' && !needActions)" 
            class="ml-2 cursor-pointer" (click)="sort(header.field)">
         <span *ngIf="header.sortable && isSorted(header.field) === 'none'">
           <img src="assets/images/icon-sortingdefault.svg">
@@ -44,7 +44,7 @@
     <ng-template #tableData>
       <div *ngFor="let g of viewData | slice: (this.page.currentPage * this.page.recordsPerPage) - this.page.recordsPerPage : this.page.currentPage * this.page.recordsPerPage; index as i">
         <div class="serm-table-row-scroll">
-          <div *ngFor="let headerField of displayHeaders; let j = index">
+          <div *ngFor="let headerField of headers; let j = index">
             <div *ngIf="headerField.label !== 'Select' && headerField.label !== 'ACTIONS'">
               <ng-container *ngIf="g.open; else readOnly">
                 <div *ngIf="displayedFields.includes(headerField.field)">
