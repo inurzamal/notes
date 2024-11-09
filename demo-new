@@ -1,36 +1,116 @@
-<!-- Header Rows -->
-<div class="serm-table-header sticky-header">
-  <ng-container *ngFor="let header of headers; let j = index">
-    <ng-container *ngIf="!(header.label === 'Select' && !needActions) && !(header.label === 'ACTIONS' && !needActions)">
-      <div [ngClass]="header.class + ' d-flex'">
-        <div>{{ header.label | titlecase }}</div>
-        <!-- Sorting logic if any -->
-      </div>
-    </ng-container>
-  </ng-container>
-</div>
+<div *ngIf="viewData && viewData.length > 0" class="container-export">
+  <span (click)="exportEvent()" class="hyperlink">
+    <img style="width: 16px; height: 16px; margin-bottom: 5px;" src="assets/images/ic_download.svg">&nbsp; Export
+  </span>
+  <span class="select-span">Select All</span>
+  <span>
+    <input type="checkbox" name="select-all" [checked]="isSelectedAll === true" (change)="selectAllEvent($event)" [erraElementRolePrivilege]="functionalityToRoleMapping.CFR1">
+  </span>
+</div> 
 
-<!-- Data Rows -->
-<div class="serm-table-body">
-  <ng-container *ngIf="viewData && viewData.length > 0; else noData">
-    <div *ngFor="let g of viewData | slice: (page.currentPage * page.recordsPerPage) - page.recordsPerPage : page.currentPage * page.recordsPerPage; index as i">
-      <div class="serm-table-row-scroll">
-        <ng-container *ngFor="let headerField of headers; let j = index">
-          <ng-container *ngIf="!(headerField.label === 'Select' && !needActions) && !(headerField.label === 'ACTIONS' && !needActions)">
-            <div [ngClass]="headerField.class">
-              <ng-container *ngIf="g.open; else readOnly">
-                <div>{{ g[headerField.field] }}</div>
-              </ng-container>
-              <ng-template #readOnly>
-                <div>{{ g[headerField.field] }}</div>
-              </ng-template>
-            </div>
-          </ng-container>
-        </ng-container>
-      </div>
+<div class="serm-table-scroll expandable-table sticky-header-table">
+  <!-- Header Rows -->
+  <div class="serm-table-header sticky-header">
+    <ng-container *ngFor="let header of headers">
+      <ng-container *ngIf="!(header.label === 'Select' && !needActions) && !(header.label === 'ACTIONS' && !needActions)">
+        <div [class]="header.class + ' d-flex'">
+          <div>{{header.label | titlecase}}
+            <input *ngIf="header.label === 'Select'" class="page-select" type="checkbox" [name]=" + 'page-checkbox'"
+              [value]="isPageSelected" [checked]="isPageSelected === true" (change)="selectPageEvent($event)"
+              [disabled]="isAllSelected === true" [erraElementRolePrivilege]="functionalityToRoleMapping.CFR1"
+              id="cfr1PageSelectAll">
+          </div>
+          <div class="ml-2 cursor-pointer" (click)="sort(header.field)">
+            <span *ngIf="header.sortable && isSorted(header.field) === 'none'">
+              <img src="assets/images/icon-sortingdefault.svg">
+            </span>
+            <span *ngIf="header.sortable && isSorted(header.field) === 'ascend'">
+              <img src="assets/images/icon-sortingascending.svg">
+            </span>
+            <span *ngIf="header.sortable && isSorted(header.field) === 'descend'">
+              <img src="assets/images/icon-sortingdescending.svg">
+            </span>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <!-- Data Rows -->
+  <div class="serm-table-body">
+    <div class="serm-table-body-empty" *ngIf="!viewData || viewData.length < 1; else tableData">
+      No data available
     </div>
-  </ng-container>
-  <ng-template #noData>
-    <div class="serm-table-body-empty">No data available</div>
-  </ng-template>
+
+    <ng-template #tableData>
+      <div *ngFor="let g of viewData | slice: (this.page.currentPage * this.page.recordsPerPage) - this.page.recordsPerPage : this.page.currentPage * this.page.recordsPerPage; index as i">
+        <div class="serm-table-row-scroll">
+          <ng-container *ngFor="let headerField of headers; let j = index">
+            <ng-container *ngIf="!(headerField.label === 'Select' && !needActions) && !(headerField.label === 'ACTIONS' && !needActions)">
+              <div [ngClass]="headerField.class">
+                <!-- Editable Content Check -->
+                <ng-container *ngIf="!batchConfig; else audit">
+                  <ng-container *ngIf="g.open; else readOnly">
+                    <div *ngIf="headerField.field === 'isNew' || headerField.field === 'batchCd' || headerField.field === 'rptUltmtEipId' ||
+                                 headerField.field === 'rptClndrId' || headerField.field === 'rptFreqId' || headerField.field === 'isActive' || 
+                                 headerField.field === 'createdBy' || headerField.field === 'createdTs' || headerField.field === 'modifiedBy' || 
+                                 headerField.field === 'modifiedTs' || headerField.field === 'approvedBy' || headerField.field === 'approvedTs' || 
+                                 headerField.field === 'approvedTsId'">
+                      {{g[headerField.field]}}
+                    </div> 
+                    <input *ngIf="headerField.field !== 'isNew' && headerField.field !== 'batchCd' && headerField.field !== 'rptUltmtEipId' &&
+                                  headerField.field !== 'rptClndrId' && headerField.field !== 'rptFreqId' && headerField.field !== 'isActive' &&
+                                  headerField.field !== 'createdBy' && headerField.field !== 'createdTs' && headerField.field !== 'modifiedBy' &&
+                                  headerField.field !== 'modifiedTs' && headerField.field !== 'approvedBy' && headerField.field !== 'approvedTs' &&
+                                  headerField.field !== 'approvedTsId'" class="serm-input" [(ngModel)]="g[headerField.field]">
+                  </ng-container>
+                  <ng-template #readOnly>
+                    <div>{{g[headerField.field]}}</div>
+                  </ng-template>
+                </ng-container>
+                <!-- Audit Content -->
+                <ng-template #audit>
+                  <div [ngClass]="headerField.class">
+                    {{g[headerField.field]}}
+                  </div>
+                </ng-template>
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <!-- Checkbox and Action Buttons -->
+          <div *ngIf="j === 0" [ngClass]="headerField.class">
+            <input *ngIf="!batchConfig" type="checkbox" [name]="i + 'checkbox'" [value]="g.checked"
+              [checked]="g.checked === true" (change)="selectRowEvent($event, g)"
+              [disabled]="isAllSelected === true" [erraElementRolePrivilege]="functionalityToRoleMapping.CFR1">
+          </div>
+          <div *ngIf="j === 1" [ngClass]="headerField.class">
+            <span class="spaces" *ngIf="!batchConfig">
+              <span *ngIf="!g.open">
+                <img class="cursor-pointer p5 icon-height" title="Edit" (click)="editRowEvent(g)"
+                  src="assets/images/ic_edit.svg" [erraElementRolePrivilege]="functionalityToRoleMapping.CFR1">
+              </span>
+              <span *ngIf="g.open">
+                <span title="delete" class="cursor-pointer p5 icon-height" (click)="deleteRowEvent(g)"> 
+                  <i class="fas fa-minus-circle"></i>
+                </span>
+                <span title="confirm" class="saveTick p5 icon-height" (click)="updateRowEvent(g)"> 
+                  <i class="fas fa-check"></i>
+                </span>
+                <span title="revert" class="cursor-pointer icon-height" (click)="cancelEdit(g)"> 
+                  <i class="fas fa-ban"></i>
+                </span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+  
+  <div class="mt-3 pagination-wrapper">
+    <erra-pagination [recordsCount]="viewData.length" [pageObject]="page" 
+      (currentPageUpdated)="pagerUpdated($event)">
+    </erra-pagination>
+  </div>
 </div>
