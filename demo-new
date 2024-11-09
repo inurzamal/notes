@@ -13,25 +13,22 @@
 <div class="serm-table-scroll expandable-table sticky-header-table">
   <div class="serm-table-header sticky-header">
     <div [class]="header.class + ' d-flex'" *ngFor="let header of headers">
-      <div *ngIf="!(header.label === 'Select' && !needActions) && !(header.label === 'ACTIONS' && !needActions)">
+      <!-- Conditionally hide Select and Actions columns -->
+      <div *ngIf="header.label !== 'Select' && header.label !== 'ACTIONS' || needActions">
         {{header.label | titlecase}}
-        <input *ngIf="header.label === 'Select' && needActions" class="page-select" type="checkbox" [name]=" + 'page-checkbox'"
-               [value]="isPageSelected" [checked]="isPageSelected === true" (change)="selectPageEvent($event)"
-               [disabled]="isAllSelected === true" [erraElementRolePrivilege]="functionalityToRoleMapping.CFR1"
-               id="cfr1PageSelectAll">
-      </div>
-      
-      <div *ngIf="!(header.label === 'Select' && !needActions) && !(header.label === 'ACTIONS' && !needActions)" 
-           class="ml-2 cursor-pointer" (click)="sort(header.field)">
-        <span *ngIf="header.sortable && isSorted(header.field) === 'none'">
-          <img src="assets/images/icon-sortingdefault.svg">
-        </span>
-        <span *ngIf="header.sortable && isSorted(header.field) === 'ascend'">
-          <img src="assets/images/icon-sortingascending.svg">
-        </span>
-        <span *ngIf="header.sortable && isSorted(header.field) === 'descend'">
-          <img src="assets/images/icon-sortingdescending.svg">
-        </span>
+
+        <!-- Sorting buttons -->
+        <div *ngIf="header.sortable" class="ml-2 cursor-pointer" (click)="sort(header.field)">
+          <span *ngIf="isSorted(header.field) === 'none'">
+            <img src="assets/images/icon-sortingdefault.svg">
+          </span>
+          <span *ngIf="isSorted(header.field) === 'ascend'">
+            <img src="assets/images/icon-sortingascending.svg">
+          </span>
+          <span *ngIf="isSorted(header.field) === 'descend'">
+            <img src="assets/images/icon-sortingdescending.svg">
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -45,7 +42,8 @@
       <div *ngFor="let g of viewData | slice: (this.page.currentPage * this.page.recordsPerPage) - this.page.recordsPerPage : this.page.currentPage * this.page.recordsPerPage; index as i">
         <div class="serm-table-row-scroll">
           <div *ngFor="let headerField of headers; let j = index">
-            <div *ngIf="headerField.label !== 'Select' && headerField.label !== 'ACTIONS'">
+            <!-- Conditionally hide Select and Actions columns -->
+            <div *ngIf="headerField.label !== 'Select' && headerField.label !== 'ACTIONS' || needActions" [ngClass]="headerField.class">
               <ng-container *ngIf="g.open; else readOnly">
                 <div *ngIf="displayedFields.includes(headerField.field)">
                   {{g[headerField.field]}}
@@ -56,11 +54,13 @@
                 <div>{{g[headerField.field]}}</div>
               </ng-template>
             </div>
+            <!-- Select Checkbox column -->
             <div *ngIf="headerField.label === 'Select' && needActions" [ngClass]="headerField.class">
               <input type="checkbox" [name]="i + 'checkbox'" [value]="g.checked" 
                      [checked]="g.checked === true" (change)="selectRowEvent($event, g)"
                      [disabled]="isAllSelected === true" [erraElementRolePrivilege]="functionalityToRoleMapping.CFR1">
             </div>
+            <!-- Actions column -->
             <div *ngIf="headerField.label === 'ACTIONS' && needActions" [ngClass]="headerField.class">
               <span *ngIf="!g.open">
                 <img class="cursor-pointer p5 icon-height" title="Edit" (click)="editRowEvent(g)" 
