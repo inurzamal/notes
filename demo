@@ -6,16 +6,15 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
 
+// Define RatingElement interface for typing
 export interface RatingElement {
-  country: string;
-  ratingdate: string;
-  oldcrr: string;
-  oldcrroutlook: string;
-  oldcrg: string;
-  newcrr: string;
-  newcrroutlook: string;
-  newcrg: string;
-  ratingcomment: string;
+  name: string;
+  type: string;
+  position: number;
+  weight: number;
+  symbol: string;
+  createdt: Date;
+  users: any;
 }
 
 @Component({
@@ -24,24 +23,20 @@ export interface RatingElement {
   styleUrls: ['./rating-action.component.scss']
 })
 export class RatingActionComponent implements OnInit, OnDestroy {
-  selectedCountry: string = '';
-  fromUpdateDate = '';
-  toUpdateDate = '';
+  selectedCountry: string;
   requiredpickerInput = new UntypedFormControl('', [Validators.required]);
   fromDatePickerInput = new UntypedFormControl('', [Validators.required]);
   toDatePickerInput = new UntypedFormControl('', [Validators.required]);
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  displayedColumns: string[] = [
-    'country', 'ratingdate', 'oldcrr', 'oldcrroutlook', 
-    'oldcrg', 'newcrr', 'newcrroutlook', 'newcrg', 'ratingcomment'
-  ];
-  dataSource = new MatTableDataSource<RatingElement>();
   countries: string[] = [];
+  displayedColumns: string[] = ['country', 'ratingdate', 'oldcrr', 'oldcrroutlook', 'oldcrg', 'newcrr', 'newcrroutlook', 'newcrg', 'ratingcomment'];
+  dataSource = new MatTableDataSource<RatingElement>();
   private subscription: Subscription;
 
+  // Sample data
   headerMapping = {
     country: 'Country',
     ratingdate: 'Rating Date',
@@ -52,32 +47,36 @@ export class RatingActionComponent implements OnInit, OnDestroy {
     newcrroutlook: 'New CRR Outlook',
     newcrg: 'New CRG',
     ratingcomment: 'Rating Comment'
-  };
+  }
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.getData();
+    this.getdata();
   }
 
-  getData(): void {
-    this.subscription = this.http.get<RatingElement[]>('../../../assets/json/ratingaction.json').subscribe(response => {
-      this.dataSource = new MatTableDataSource(response);
+  getdata() {
+    this.http.get<RatingElement[]>('../../../assets/json/ratingaction.json').subscribe((response) => {
+      this.dataSource.data = response;
+      this.countries = [...new Set(response.map(data => data.country))];
+
+      // Set paginator and sorter after data is set
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.countries = [...new Set(response.map(data => data.country))];
     });
   }
 
-  showData(): void {
+  showData() {
     this.http.get<RatingElement[]>('../../../assets/json/ratingaction.json', {
       params: {
         country: this.selectedCountry,
-        fromUpdateDate: this.fromUpdateDate,
-        toUpdateDate: this.toUpdateDate
+        fromUpdateDate: this.fromDatePickerInput.value,
+        toUpdateDate: this.toDatePickerInput.value
       }
-    }).subscribe(response => {
-      this.dataSource = new MatTableDataSource(response);
+    }).subscribe((response) => {
+      this.dataSource.data = response;
+
+      // Set paginator and sorter after data is set
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
