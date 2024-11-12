@@ -1,1 +1,48 @@
-<div *ngIf="header.label !== 'Select' && header.label !== 'ACTIONS' || needActions" [class]="header.class + ' d-flex'">
+<div fxLayout="column" style="width: 100%; margin-top: 50px">
+  <mat-card>
+    <mat-card-header class="actionrating">Rating Actions</mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <mat-form-field appearance="fill">
+          <mat-label>Country</mat-label>
+          <mat-select [(ngModel)]="selectedCountry" name="country">
+            <mat-option *ngFor="let country of countries" [value]="country">{{ country }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>From Rev. Date</mat-label>
+          <input matInput [matDatepicker]="fromDatePicker" placeholder="Choose a date" [(ngModel)]="fromUpdateDate">
+          <mat-datepicker-toggle matSuffix [for]="fromDatePicker">
+            <mat-icon matDatepickerToggleIcon svgIcon="WF_icon_calendar"></mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #fromDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>To Rev. Date</mat-label>
+          <input matInput [matDatepicker]="toDatePicker" placeholder="Choose a date" [(ngModel)]="toUpdateDate">
+          <mat-datepicker-toggle matSuffix [for]="toDatePicker">
+            <mat-icon matDatepickerToggleIcon svgIcon="WF_icon_calendar"></mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #toDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <button mat-button color="primary" (click)="showData()">Show</button>
+        <button mat-button color="primary" (click)="showData()">Export</button>
+      </div>
+
+      <div style="width: 100%; overflow-x: auto;">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef> {{ headerMapping[column] }} </th>
+            <td mat-cell *matCellDef="let element"> {{ element[column] }} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
