@@ -1,107 +1,63 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { UntypedFormControl, Validators } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
-import { HttpClient } from '@angular/common/http';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
-import { Subscription } from 'rxjs';
+<div fxLayout="column" style="width: 100%; margin-top: 50px">
+    <mat-card>
+        <mat-card-header class="actionrating">
+            Rating Actions
+        </mat-card-header>
+        <mat-card-content>
+            <div class="row">
+                <!-- Country Dropdown -->
+                <mat-form-field>
+                    <mat-label class="mlabel">Country</mat-label>
+                    <mat-select [(ngModel)]="selectedCountry" name="country">
+                        <mat-option *ngFor="let country of countries" [value]="country">
+                            {{ country }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
 
-export interface RatingElement {
-    country: string;
-    ratingdate: Date;
-    oldcrr: string;
-    oldcrroutlook: string;
-    oldcrg: string;
-    newcrr: string;
-    newcrroutlook: string;
-    newcrg: string;
-    ratingcomment: string;
-}
+                <!-- From Revision Date -->
+                <mat-form-field appearance="fill">
+                    <mat-label class="mlabel">From Rev. Date</mat-label>
+                    <input matInput [matDatepicker]="fromDatePicker" placeholder="Choose a date"
+                           required [(ngModel)]="fromUpdateDate">
+                    <mat-datepicker-toggle matSuffix [for]="fromDatePicker">
+                        <mat-icon matDatepickerToggleIcon svgIcon="WF_icon_calendar"></mat-icon>
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #fromDatePicker></mat-datepicker>
+                    <mat-error *ngIf="fromDatePickerInput.hasError('required')">Invalid Input</mat-error>
+                </mat-form-field>
 
-const ELEMENT_DATA: RatingElement[] = [
-    {
-        country: 'Example Country',
-        ratingdate: new Date(),
-        oldcrr: 'Old CRR',
-        oldcrroutlook: 'Stable',
-        oldcrg: 'Old CRG',
-        newcrr: 'New CRR',
-        newcrroutlook: 'Positive',
-        newcrg: 'New CRG',
-        ratingcomment: 'Sample comment'
-    }
-    // Add more items as needed
-];
+                <!-- To Revision Date -->
+                <mat-form-field appearance="fill">
+                    <mat-label class="mlabel">To Rev. Date</mat-label>
+                    <input matInput [matDatepicker]="toDatePicker" placeholder="Choose a date"
+                           required [(ngModel)]="toUpdateDate">
+                    <mat-datepicker-toggle matSuffix [for]="toDatePicker">
+                        <mat-icon matDatepickerToggleIcon svgIcon="WF_icon_calendar"></mat-icon>
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #toDatePicker></mat-datepicker>
+                    <mat-error *ngIf="toDatePickerInput.hasError('required')">Invalid Input</mat-error>
+                </mat-form-field>
 
-@Component({
-    selector: 'app-rating-action',
-    templateUrl: './rating-action.component.html',
-    styleUrls: ['./rating-action.component.scss']
-})
-export class RatingActionComponent implements OnInit, OnDestroy {
-    selectedValue: string;
-    requiredpickerInput = new UntypedFormControl('', [Validators.required]);
-    fromDatePickerInput = new UntypedFormControl('', [Validators.required]);
-    toDatePickerInput = new UntypedFormControl('', [Validators.required]);
+                <!-- Action Buttons -->
+                <button mat-button color="primary" class="mlabel" (click)="showData()">Show</button>
+                <button mat-button color="primary" class="mlabel" (click)="exportData()">Export</button>
+            </div>
 
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+            <!-- Data Table -->
+            <div style="width: 100%; overflow-x: auto;">
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                    <!-- Table Headers and Rows -->
+                    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+                        <th mat-header-cell *matHeaderCellDef> {{ headerMapping[column] }} </th>
+                        <td mat-cell *matCellDef="let element"> {{ element[column] }} </td>
+                    </ng-container>
 
-    countries: string[] = ['India', 'USA', 'UK', 'South Africa', 'NZ', 'Paris', 'Switzerland', 'Dubai', 'China', 'Australia'];
-    displayedColumns: string[] = ['country', 'ratingdate', 'oldcrr', 'oldcrroutlook', 'oldcrg', 'newcrr', 'newcrroutlook', 'newcrg', 'ratingcomment'];
-    columnsToDisplay: string[] = this.displayedColumns.slice();
-    
-    private subscription: Subscription;
-    uniqueCountries: string[] = [];
-    dataSource = new MatTableDataSource<RatingElement>(ELEMENT_DATA); // Set initial data
-    selectedCountry = '';
-    fromUpdateDate = '';
-    toUpdateDate = '';
-
-    headerMapping = {
-        country: 'Country',
-        ratingdate: 'Rating Date',
-        oldcrr: 'Old CRR',
-        oldcrroutlook: 'Old CRR Outlook',
-        oldcrg: 'Old CRG',
-        newcrr: 'New CRR',
-        newcrroutlook: 'New CRR Outlook',
-        newcrg: 'New CRG',
-        ratingcomment: 'Rating Comment'
-    };
-
-    constructor(private http: HttpClient) {}
-
-    ngOnInit(): void {
-        this.getdata();
-    }
-
-    getdata() {
-        this.http.get<RatingElement[]>('../../../assets/json/ratingaction.json').subscribe((response) => {
-            this.dataSource = new MatTableDataSource(response);
-            this.dataSource.paginator = this.paginator;
-            this.dataSource.sort = this.sort;
-            this.countries = [...new Set(response.map((data) => data.country))];
-        });
-    }
-
-    showData() {
-        this.http.get<RatingElement[]>('../../../assets/json/ratingaction.json', {
-            params: {
-                country: this.selectedCountry,
-                fromUpdateDate: this.fromUpdateDate,
-                toUpdateDate: this.toUpdateDate
-            }
-        }).subscribe((response) => {
-            this.dataSource = new MatTableDataSource(response);
-            this.dataSource.paginator = this.paginator;
-            this.dataSource.sort = this.sort;
-        });
-    }
-
-    ngOnDestroy(): void {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
-    }
-}
+                    <!-- Header and Row Declarations -->
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
