@@ -1,0 +1,28 @@
+@Override
+public List<CountryDTO> updateCountries(List<CountryDTO> countryDTOList) {
+    List<CountryDTO> updatedCountries = new ArrayList<>();
+
+    for (CountryDTO countryDTO : countryDTOList) {
+        Optional<CountryEntity> existingCountry = countryRepository.findById(countryDTO.getCountry());
+
+        if (existingCountry.isPresent()) {
+            CountryEntity entity = existingCountry.get();
+            mappingHelper.convertToEntity(countryDTO, entity);
+            countryRepository.save(entity);
+            CountryDTO updatedCountry = (CountryDTO) mappingHelper.convertToNewDto(entity, CountryDTO.class);
+            updatedCountries.add(updatedCountry);
+        } else {
+            throw new EntityNotFoundException("Country not found: " + countryDTO.getCountry());
+        }
+    }
+
+    return updatedCountries;
+}
+---------------------------------------------------
+
+@PutMapping("/update")
+@Operation(summary = "This API is to update multiple country data")
+public ResponseEntity<List<CountryDTO>> updateCountries(@RequestBody List<CountryDTO> countryDtoList) {
+    List<CountryDTO> updatedCountries = countryRiskService.updateCountries(countryDtoList);
+    return ResponseEntity.ok(updatedCountries);
+}
