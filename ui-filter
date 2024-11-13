@@ -1,0 +1,23 @@
+showData(): void {
+  this.http.get<RatingElement[]>('../../../assets/json/ratingaction.json').subscribe(response => {
+    let filteredData = response;
+
+    // Apply filters based on selected country, fromUpdateDate, and toUpdateDate
+    if (this.selectedCountry) {
+      filteredData = filteredData.filter(item => item.country === this.selectedCountry);
+    }
+    if (this.fromUpdateDate) {
+      const fromDate = new Date(this.fromUpdateDate);
+      filteredData = filteredData.filter(item => new Date(item.ratingdate) >= fromDate);
+    }
+    if (this.toUpdateDate) {
+      const toDate = new Date(this.toUpdateDate);
+      filteredData = filteredData.filter(item => new Date(item.ratingdate) <= toDate);
+    }
+
+    // Update the data source with the filtered data
+    this.dataSource = new MatTableDataSource(filteredData);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  });
+}
