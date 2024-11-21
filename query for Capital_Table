@@ -9,3 +9,34 @@ VALUES (2025, 2000000.456789, 1000000.987654, 'Projections');
 
 INSERT INTO D_EIW_ERA_FRR_OLTP.CAPITAL_TABLE (YEAR, EQUITY, TIERI, EQUITY_COMMENT)
 VALUES (2026, 2500000.321654, 1250000.654987, 'Future estimate');
+------------------------------------------------------------------------------
+
+Rating_Action:
+
+INSERT INTO D_EIW_ERA_FRR_OLTP.RATING_ACTION_TABLE (
+    COUNTRY, RATING_DATE, OLD_CRG, OLD_CRR_OUTLOOK, NEW_CRG, NEW_CRR_OUTLOOK, RATING_COMMENT, OLD_CRR, NEW_CRR
+)
+VALUES (
+    'USA', '2023-10-15', 5, 'Stable', 4, 'Negative', 'Rating downgraded due to economic slowdown', 3.5, 3.2
+);
+
+INSERT INTO D_EIW_ERA_FRR_OLTP.RATING_ACTION_TABLE (
+    COUNTRY, RATING_DATE, OLD_CRG, OLD_CRR_OUTLOOK, NEW_CRG, NEW_CRR_OUTLOOK, RATING_COMMENT, OLD_CRR, NEW_CRR
+)
+VALUES (
+    'Germany', '2023-08-01', 7, 'Positive', 7, 'Stable', 'No change in ratings, outlook revised', 4.8, 4.8
+);
+
+INSERT INTO D_EIW_ERA_FRR_OLTP.RATING_ACTION_TABLE (
+    COUNTRY, RATING_DATE, OLD_CRG, OLD_CRR_OUTLOOK, NEW_CRG, NEW_CRR_OUTLOOK, RATING_COMMENT, OLD_CRR, NEW_CRR
+)
+VALUES (
+    'Japan', '2024-01-12', 6, 'Stable', 5, 'Negative', 'Rating downgrade due to fiscal pressures', 4.2, 4.0
+);
+
+INSERT INTO D_EIW_ERA_FRR_OLTP.RATING_ACTION_TABLE (
+    COUNTRY, RATING_DATE, OLD_CRG, OLD_CRR_OUTLOOK, NEW_CRG, NEW_CRR_OUTLOOK, RATING_COMMENT, OLD_CRR, NEW_CRR
+)
+VALUES (
+    'India', '2023-11-20', 8, 'Stable', 8, 'Positive', 'Stable economic performance, outlook improved', 5.0, 5.2
+);
